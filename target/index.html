@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="convert.png" type="image/x-icon" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="tailwind.css" />
+    <title>Converter</title>
+  </head>
+  <div class="w-full bg-gray-800 flex items-center" style ="height:64px" >
+    <h1 class="ml-3 p-2 text-white" >Converter</h1>
+  </div>
+  <div class="container flex items-center flex-col">
+    <h1 class="title-blue" id="title">Converter</h1>
+    <div class="button-holder block">
+      <button class="blue-button" id="paste">Paste</button>
+      <button class="blue-button" id="pretty">Prettify</button>
+      <button class="red-button" id="convert">Convert</button>
+      <button class="blue-button" id="copy">Copy</button>
+      <select
+      id="select-action"
+        class="custom-select form-select"
+        aria-label="Default select example"
+      >
+        <option selected>Open this select menu</option>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option>
+      </select>
+
+       <input id="isFlatCheckbox" class="form-check-input  h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain mr-2 cursor-pointer" type="checkbox" value="" >
+      <label id="check-label" class="form-check-label inline-block text-gray-800" for="flexCheckDefault">
+        Default checkbox
+      </label>
+    </div>
+    <div class="flex w-full p-8 ">
+      <textarea
+        class="text-area-grey textarea"
+        type="text"
+        name=""
+        id=""
+        style="height:500px"
+      ></textarea>
+      <textarea class="text-area-grey textarea" type="text" name="" id="" style="height:500px"></textarea>
+    </div>
+  </div>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Helper Class -->
+    <script src="js/utils/util.js"></script>
+    <script src="js/utils/ui-setup.js"></script>
+    <script src="http://lovasoa.github.io/tidy-html5/tidy.js"></script>
+
+    <!-- <script src="jsonToJHIPSTERen.js"></script> -->
+    <!-- <script src="jsonApiToModel.js"></script> -->
+    <!-- <script src="json2htmlEdit.js"></script> -->
+    <!-- <script src="apiToFrontCodeGen.js"></script> -->
+    <!-- <script src="json2newListPage.js"></script> -->
+    <!-- <script src="oldList2newList.js"></script> -->
+    <!-- <script src="oldEdit2New.js"></script> -->
+    <script src="js/old2newShowPage/old2newShow.js"></script>
+    <script src="js/old2newListPage/old2newList.js"></script>
+    <script src="js/source.js"></script>
+
+    <!-- UI Setup -->
+  </body>
+</html>

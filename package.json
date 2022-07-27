@@ -1,0 +1,26 @@
+{
+  "name": "pagemodifier",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^10.4.7",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-postcss": "^9.0.1",
+    "postcss": "^8.4.14",
+    "sass": "^1.54.0"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.5.14",
+    "gulp-sass": "^5.1.0",
+    "gulp-ts": "^0.3.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "tailwindcss": "^3.1.6"
+  }
+}
