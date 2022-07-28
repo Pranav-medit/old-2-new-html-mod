@@ -41,13 +41,12 @@
         let output = input;
         if (cacheActionType) {
             let handleFunction = determineAction(selectionItems, cacheActionType);
-            console.log(handleFunction);
             output = handleFunction(input);
         }
         else {
             output = determineAction(selectionItems, defaultAction)(input);
         }
-        return input;
+        return output;
     });
     const hET = new HtmlTool();
     const sH = new StringHelper();

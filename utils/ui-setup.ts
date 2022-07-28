@@ -99,7 +99,10 @@ class SetupUI{
         value: value
       }));
     })
-    this.selectAction?.val('edit')
+    let cache = this.getLocalStorage('action-type')
+    if(cache!=null){
+      this.selectAction?.val(cache);
+    }
   }
   setInputCache(val: string){
     try{

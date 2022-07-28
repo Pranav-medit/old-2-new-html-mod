@@ -43,7 +43,7 @@
     }else{
       output = determineAction(selectionItems,defaultAction)(input);
     }
-    return input
+    return output
   });
   const hET:HtmlTool = new HtmlTool();
   const sH:StringHelper = new StringHelper();

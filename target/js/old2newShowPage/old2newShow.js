@@ -23,13 +23,13 @@ function wrapWithHeaderHtml(html, dto, page = false, baseJhi = false) {
   <jhi-alert></jhi-alert>
     ` + html + '\n</div>';
 }
-function wrapWithHeaderHtml2(html, jhi, page) {
+function wrapWithHeaderHtml2(html, jhi, page, ngIf = '', rl = '') {
     return `
-  <div class="bg-white shadow-sm rounded h-full relative" >\n
+  <div ${ngIf} class="bg-white shadow-sm rounded h-full relative" >\n
   <!--Head-->\n
   <div class="flex gap-3 items-center p-3">
     <div class="modal-title" ${jhi}>${page} Details</div>
-    <button class="btn-dark-blue ml-auto" jhiTranslate="entity.action.edit">Edit ${page}</button>
+    <button class="btn-dark-blue ml-auto" jhiTranslate="entity.action.edit" ${rl} >Edit</button>
     <button class="btn-icon-blue" (click)="previousState()">
       <span class="material-icons">close</span>
     </button>
@@ -141,24 +141,29 @@ function generateTabHeader(tabStructureArr) {
 function generateTrs(tabStructure) {
     let tabHtml = ``;
     for (let tab of tabStructure[Object.keys(tabStructure)[0]]) {
-        let extractedDtoPartText = extractDto(tab.jhiTranslate, true);
-        let removedDtoPartText = tab.jhiTranslate.replace(extractedDtoPartText + '.', "");
-        let textInsider = seperateCharectersUponUppercase(removedDtoPartText, true);
-        if (tab.subValue) {
-            tabHtml += ` 
-            <div ${tab.ngIf} class="list">
-            \t<div jhiTranslate="${tab.jhiTranslate}" class="list-label">${textInsider}</div>
-            \t<div class="list-content">{{ ${tab.subValue} }}</div>
-            </div>\n`;
+        try {
+            let extractedDtoPartText = extractDto(tab.jhiTranslate, true);
+            let removedDtoPartText = tab.jhiTranslate.replace(extractedDtoPartText + '.', "");
+            let textInsider = seperateCharectersUponUppercase(removedDtoPartText, true);
+            if (tab.subValue) {
+                tabHtml += ` 
+              <div ${tab.ngIf} class="list">
+              \t<div jhiTranslate="${tab.jhiTranslate}" class="list-label">${textInsider}</div>
+              \t<div class="list-content">{{ ${tab.subValue} }}</div>
+              </div>\n`;
+            }
+            else {
+                tabHtml += `
+              <tr>
+                  <td></td>
+                  <td class="p-2 text-secondary">
+                      <h6 jhiTranslate="${tab.jhiTranslate}">${textInsider}</h6>
+                  </td>
+              </tr>\n`;
+            }
         }
-        else {
-            tabHtml += `
-            <tr>
-                <td></td>
-                <td class="p-2 text-secondary">
-                    <h6 jhiTranslate="${tab.jhiTranslate}">${textInsider}</h6>
-                </td>
-            </tr>\n`;
+        catch (e) {
+            console.error(e);
         }
     }
     return tabHtml;
@@ -207,11 +212,18 @@ function generateShowPageMainBody(htmlText) {
 function dtoExtractorFromDetailDto(str) {
     return str.split('.').slice(-3, -2).join('');
 }
+function extractRouterLinkOfEditButton(htmlInput) {
+    let button = hET.extractHtmlTag(htmlInput, 'button', '\\[routerLink\\]');
+    let rl = hET.extractAttribute(button, '\\[routerLink\\]');
+    return rl;
+}
 function generateEntireShowPageHtml(htmlText) {
     let html = ``;
     html = generateShowPageMainBody(htmlText);
     let h6 = hET.extractHtmlTag2(htmlText, 'h6').trim();
     let jhiVal = hET.extractAttributeValue(hET.extractAttribute(h6, 'jhiTranslate'));
-    html = wrapWithHeaderHtml2(html, hET.extractAttribute(h6, 'jhiTranslate'), seperateCharectersUponUppercase(dtoExtractorFromDetailDto(jhiVal), true));
+    let firstNgIf = hET.extractAttribute(htmlText, '\\*ngIf');
+    let rl = extractRouterLinkOfEditButton(htmlText);
+    html = wrapWithHeaderHtml2(html, hET.extractAttribute(h6, 'jhiTranslate'), seperateCharectersUponUppercase(dtoExtractorFromDetailDto(jhiVal), true), firstNgIf, rl);
     return html;
 }
