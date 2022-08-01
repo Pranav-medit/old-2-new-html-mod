@@ -58,9 +58,9 @@ class HtmlTool{
     if(regexMatchArray) return regexMatchArray.length; 
     return 0;
   }
-  replaceWithErrorHandle(str: { replace: (arg0: boolean | RegExp, arg1: any) => string; },regStr: string | RegExp,repVal: string,text=false){
+  replaceWithErrorHandle(str: string,regStr: string | RegExp,repVal: string,text:boolean|string=false){
     try{
-      if(text){ return str.replace(text,repVal).trim() }
+      if(text){ return str.replace(<string>text,repVal).trim() }
       return str.replace(new RegExp(regStr),repVal).trim()
     }catch(e){
       console.warn(e);
@@ -68,9 +68,10 @@ class HtmlTool{
   }
   matchNReplace(inputStr: string,regexp: string | RegExp){
     let match,replacedStr;
-    match=this.matchWithErrorHandle(inputStr,new RegExp(regexp))
-    replacedStr = inputStr.replace(match,'');
-    return [match[0],replacedStr];
+    match = this.matchWithErrorHandle(inputStr,regexp)
+    replacedStr=this.replaceWithErrorHandle(inputStr,regexp,'')
+    // replacedStr = inputStr.replace(match,'');
+    return [match,replacedStr];
   }
   extractHtmlTag(str: any,tag: any,attr="",noCloseTag=false){
     const tagRegexp = this.getTagRegexp(tag,attr,noCloseTag);

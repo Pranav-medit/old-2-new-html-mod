@@ -36,23 +36,11 @@ class SetupUI {
         }
     }
     changeTitles(titleText = '', checkLabel = '') {
-        // if(!this.checkLabel || !this.title) {console.error('Title or checklabel empty');return;}
-        // Set Titles
-        // if(document.readyState === "complete") {
-        //   // Fully loaded!
-        //   if(!this.checkLabel || !this.title) {throw new Error('Checklabel not found');  }
-        //   this.checkLabel.innerText = checkLabel
-        //   this.title.innerText = titleText
-        // }else{
-        // window.addEventListener("load", () => {
         if (!this.checkLabel || !this.title) {
             throw new Error('Checklabel not found');
         }
-        // DOM ready! Images, frames, and other subresources are still downloading.
         this.checkLabel.innerText = checkLabel;
         this.title.innerText = titleText;
-        // });
-        // }
     }
     copyFromElem(element) {
         navigator.clipboard.writeText(element.value);

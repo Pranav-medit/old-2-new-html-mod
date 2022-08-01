@@ -74,9 +74,10 @@ class HtmlTool {
     }
     matchNReplace(inputStr, regexp) {
         let match, replacedStr;
-        match = this.matchWithErrorHandle(inputStr, new RegExp(regexp));
-        replacedStr = inputStr.replace(match, '');
-        return [match[0], replacedStr];
+        match = this.matchWithErrorHandle(inputStr, regexp);
+        replacedStr = this.replaceWithErrorHandle(inputStr, regexp, '');
+        // replacedStr = inputStr.replace(match,'');
+        return [match, replacedStr];
     }
     extractHtmlTag(str, tag, attr = "", noCloseTag = false) {
         const tagRegexp = this.getTagRegexp(tag, attr, noCloseTag);
