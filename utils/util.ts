@@ -39,10 +39,20 @@ class HtmlTool{
   isPresent(string: string,reg: string | RegExp){
     return string.match(new RegExp(reg)) ? true : false; 
   }
-  matchWithErrorHandle(str: string,regStr: string | RegExp){
+  matchWithErrorHandle(str: string,regStr: string | RegExp,flags:string=''){
     try{
-      let res:any = str.match(new RegExp(regStr));
+      let res:any = str.match(new RegExp(regStr,flags));
       res = res ? res[0] : '';
+      this.cacheStr = res;
+      return res
+    }catch(e){
+      console.warn(e);
+    }
+  }
+  matchWithFlag(str: string,regStr: string | RegExp,flags:string=''){
+    try{
+      let res:any = str.match(new RegExp(regStr,flags));
+      res = res ? res : '';
       this.cacheStr = res;
       return res
     }catch(e){
@@ -80,6 +90,9 @@ class HtmlTool{
   extractHtmlTag2(str: any,tag: any,attr="",noCloseTag=false){
     const tagRegexp = this.getTagRegexp2(tag,attr,noCloseTag);
     return this.matchWithErrorHandle(str,tagRegexp);
+  }
+  extractHtmlValue(tag:string){
+    return this.matchWithErrorHandle(tag,`(?<=>)${this.any}(?=<)`);
   }
   extractAttributeValue(attr: string | null){
     if(attr==null) {console.warn("Undefined attribute value");return;}

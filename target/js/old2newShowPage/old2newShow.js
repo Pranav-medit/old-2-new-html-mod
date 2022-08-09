@@ -73,7 +73,7 @@ function extractJhiTranslate(str) {
     return hET.matchWithErrorHandle(str, `(?<=jhiTranslate\\s*?=\\s*?)".*?"`).slice(1, -1);
 }
 function extractNgSubValue(str) {
-    return hET.matchWithErrorHandle(str, `(?<={{).*?(?=}})`);
+    return hET.matchWithFlag(str, `(?<={{).*?(?=}})`, 'g');
 }
 function extractNgTabTitle(str) {
     let a = str.match(new RegExp('(?<=<ngb-tab[\\s.\\n\\S]*?title\\s*?=\\s*?)".*?"'));
@@ -83,24 +83,34 @@ function extractNgIf(str) {
     return hET.matchWithErrorHandle(str, '\\*ngIf=".*?"');
 }
 function extractDto(str, isInnerStr = false) {
-    console.log(str);
+    // console.log(str)
     if (isInnerStr) {
         return str.trim().split('.').slice(0, -1).join('.').trim();
     }
     return extractJhiTranslate(str).trim().split('.').slice(0, -1).join('.').trim();
+}
+function extractPlainText(tr) {
+    let span = hET.extractHtmlTag(tr, 'span');
+    return hET.extractHtmlValue(span);
 }
 function createTrStructureObj(trArray) {
     let trObjArr = [];
     for (let tr of trArray) {
         let trObj = {};
         try {
-            trObj["subValue"] = extractNgSubValue(tr);
+            let subArr = extractNgSubValue(tr);
+            if (subArr) {
+                trObj["subValue"] = subArr[subArr.length - 1];
+            }
         }
         catch (err) {
             console.log(err);
         }
         try {
-            trObj["jhiTranslate"] = extractJhiTranslate(tr);
+            let jhi = extractJhiTranslate(tr);
+            trObj["jhiTranslate"] = jhi;
+            if (!jhi || jhi === '')
+                trObj["innerText"] = extractPlainText(tr);
         }
         catch (err) {
             console.log(err);
@@ -142,14 +152,22 @@ function generateTrs(tabStructure) {
     let tabHtml = ``;
     for (let tab of tabStructure[Object.keys(tabStructure)[0]]) {
         try {
-            let extractedDtoPartText = extractDto(tab.jhiTranslate, true);
-            let removedDtoPartText = tab.jhiTranslate.replace(extractedDtoPartText + '.', "");
-            let textInsider = seperateCharectersUponUppercase(removedDtoPartText, true);
+            let extractedDtoPartText;
+            let removedDtoPartText;
+            let textInsider;
+            if (tab.jhiTranslate === '') {
+                textInsider = tab.innerText;
+            }
+            else {
+                extractedDtoPartText = extractDto(tab.jhiTranslate, true);
+                removedDtoPartText = tab.jhiTranslate.replace(extractedDtoPartText + '.', "");
+                textInsider = seperateCharectersUponUppercase(removedDtoPartText, true);
+            }
             if (tab.subValue) {
                 tabHtml += ` 
               <div ${tab.ngIf} class="list">
               \t<div jhiTranslate="${tab.jhiTranslate}" class="list-label">${textInsider}</div>
-              \t<div class="list-content">{{ ${tab.subValue} }}</div>
+              \t<div class="list-content">{{${tab.subValue}}}</div>
               </div>\n`;
             }
             else {
@@ -190,10 +208,16 @@ function capitalizeFirstLetter(strToCapitalize) {
     return strToCapitalize[0].toUpperCase() + strToCapitalize.slice(1);
 }
 function seperateCharectersUponUppercase(strInput, firstCap) {
-    if (firstCap) {
-        return capitalizeFirstLetter(strInput.split(/(?=[A-Z])/).join(' '));
+    try {
+        if (firstCap) {
+            return capitalizeFirstLetter(strInput.split(/(?=[A-Z])/).join(' '));
+        }
+        return strInput.split(/(?=[A-Z])/).join(' ');
     }
-    return strInput.split(/(?=[A-Z])/).join(' ');
+    catch (e) {
+        console.error(e);
+        return '';
+    }
 }
 function generateShowPageMainBody(htmlText) {
     let showPageMainBodyHtml = ``;
@@ -217,6 +241,32 @@ function extractRouterLinkOfEditButton(htmlInput) {
     let rl = hET.extractAttribute(button, '\\[routerLink\\]');
     return rl;
 }
+function warnUser2(inputHtml, outputHtml, regex, name) {
+    if (regex.includes('\\{\\{')) {
+        let inptArr = inputHtml.match(new RegExp(regex, 'g'));
+        let outArr = outputHtml.match(new RegExp(regex, 'g'));
+        console.log(inptArr, outArr);
+        for (let ia of inptArr) {
+            if (!outArr.includes(ia)) {
+                console.log(ia);
+            }
+        }
+        console.log(inptArr, outArr);
+    }
+    try {
+        let inputCounts = htmlExtractTool.getMatchCounts(inputHtml, regex);
+        let outputCounts = htmlExtractTool.getMatchCounts(outputHtml, regex);
+        if (inputCounts !== outputCounts) {
+            console.error(`${name} input has '${inputCounts}' count and output has '${outputCounts}'`);
+        }
+        else {
+            console.info(name + " is fine", inputCounts, outputCounts);
+        }
+    }
+    catch (e) {
+        console.warn(name + "skipped due to error", e);
+    }
+}
 function generateEntireShowPageHtml(htmlText) {
     let html = ``;
     html = generateShowPageMainBody(htmlText);
@@ -225,5 +275,9 @@ function generateEntireShowPageHtml(htmlText) {
     let firstNgIf = hET.extractAttribute(htmlText, '\\*ngIf');
     let rl = extractRouterLinkOfEditButton(htmlText);
     html = wrapWithHeaderHtml2(html, hET.extractAttribute(h6, 'jhiTranslate'), seperateCharectersUponUppercase(dtoExtractorFromDetailDto(jhiVal), true), firstNgIf, rl);
+    warnUser2(htmlText, html, '\\{\\{[\\s\\S\\n.]*?\\}\\}', '{{......}}');
+    warnUser2(htmlText, html, '\\*ngIf', 'NGIF');
+    warnUser2(htmlText, html, 'BASE_URL', 'Base url');
+    warnUser2(htmlText, html, '\\*ngFor', 'NG for');
     return html;
 }

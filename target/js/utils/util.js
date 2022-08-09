@@ -40,10 +40,21 @@ class HtmlTool {
     isPresent(string, reg) {
         return string.match(new RegExp(reg)) ? true : false;
     }
-    matchWithErrorHandle(str, regStr) {
+    matchWithErrorHandle(str, regStr, flags = '') {
         try {
-            let res = str.match(new RegExp(regStr));
+            let res = str.match(new RegExp(regStr, flags));
             res = res ? res[0] : '';
+            this.cacheStr = res;
+            return res;
+        }
+        catch (e) {
+            console.warn(e);
+        }
+    }
+    matchWithFlag(str, regStr, flags = '') {
+        try {
+            let res = str.match(new RegExp(regStr, flags));
+            res = res ? res : '';
             this.cacheStr = res;
             return res;
         }
@@ -86,6 +97,9 @@ class HtmlTool {
     extractHtmlTag2(str, tag, attr = "", noCloseTag = false) {
         const tagRegexp = this.getTagRegexp2(tag, attr, noCloseTag);
         return this.matchWithErrorHandle(str, tagRegexp);
+    }
+    extractHtmlValue(tag) {
+        return this.matchWithErrorHandle(tag, `(?<=>)${this.any}(?=<)`);
     }
     extractAttributeValue(attr) {
         if (attr == null) {
