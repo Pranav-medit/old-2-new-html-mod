@@ -32,11 +32,13 @@
         'Old to new Edit Page': "edit",
     }));
     const setUpUI = new SetupUI((selectedValue) => {
+        // selection  button handler
         let handleFunction = determineAction(selectionItems, selectedValue);
         setUpUI.setConvertButtonHandler((input) => handleFunction(input));
         setUpUI.setLocalStorage('action-type', selectedValue);
         return selectedValue;
     }, (input) => {
+        // convert button handler
         let cacheActionType = setUpUI.getLocalStorage('action-type');
         let output = input;
         if (cacheActionType) {
