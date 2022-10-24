@@ -3,6 +3,7 @@ class StringHelper{
     return strToCapitalize[0].toUpperCase() + strToCapitalize.slice(1);
   }
   seperateCharectersUponUppercase(strInput: string, firstCap: any) {
+    // converts camel case to normal text with space
     if (firstCap) {
       return this.capitalizeFirstLetter(strInput.split(/(?=[A-Z])/).join(" "));
     }
@@ -11,15 +12,18 @@ class StringHelper{
 }
 class ObjectHelperClass{
   getObjectValue(obj: any, key: string) {
+    // Works like jhitranslate , if you pass obj and string like ({a:1,b:{ball:2}},"b.ball") -> 2;
     try{
-
       let arr = key.split(".");
+      // prevent infinite recursion.
       let maxIterations = 100;
       let iterations = 0;
       let res = obj;
       while (arr.length !== 0 && iterations < maxIterations) {
         iterations++;
+        // select res[0] in the array , goes like [b,ball] -> b[ball]
         res = res[arr[0]];
+        // remove first item from array as it is finished
         arr.shift();
       }
       return res;
@@ -37,6 +41,7 @@ class HtmlTool{
   closeTag=`[>\\n\\s\\t]+?`
   cacheStr = ""
   isPresent(string: string,reg: string | RegExp){
+    // if regex string match return true
     return string.match(new RegExp(reg)) ? true : false; 
   }
   matchWithErrorHandle(str: string,regStr: string | RegExp,flags:string=''){
@@ -146,6 +151,7 @@ class HtmlTool{
   }
 }
 class HtmlFormatter{
+  // Formats html
   formatHTML(html: string,newLineNum=1,tabNum=1) {
     let indent = '\n'.repeat(newLineNum);
     let tab = '\t'.repeat(tabNum);

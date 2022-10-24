@@ -2,6 +2,8 @@
 // import {SetupUI} from './utils/ui-setup'
 (function () {
   let defaultAction = 'show'
+  // Get values of map based on index of the map
+  // as Map remembers original insertion order.
   function getNthMapItem<T,U>(mapObj:Map<T,U>,n:number): [T,U]{
     // The key at index n
     var key = Array.from(mapObj.keys())[n] ;                 // Returns key
@@ -12,6 +14,7 @@
     return [key,val]
   }
   function determineAction(compareObj:Map<string,string>,value:string){
+    // Compare selectionItems map first item with user selected option, basically if user has selected first option
     if(value == getNthMapItem<string,string>(compareObj,0)[1]){
       setUpUI.changeTitles('Old 2 new List page','N/A');
       return analyzeResults;

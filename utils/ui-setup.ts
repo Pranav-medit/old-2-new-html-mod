@@ -66,9 +66,12 @@ class SetupUI{
     })
   }
   convertButtonHandler(fn2Call: (arg0: string) => string){
+    // Cache input action and preserve it, if user reloads page then input gets populated once again(using localstorage)
     this.setInputCache(this.inputArea.value); 
+    // Clear output textarea first.
     this.outputArea.value='';
     setTimeout(()=>{
+      // To feel difference of output time add 100ms delay in execution
         this.outputArea.value = fn2Call(this.inputArea.value)
     },100)
   }
@@ -87,8 +90,10 @@ class SetupUI{
         value: value
       }));
     })
+    // Get cache if present to populate action type. 
     let cache = this.getLocalStorage('action-type')
     if(cache!=null){
+      // select button 
       this.selectAction?.val(cache);
     }
   }
